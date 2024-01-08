@@ -7,6 +7,7 @@ const app = express()
 
 // rest of the packes
 const morgan = require('morgan')
+const cookieParser = require('cookie-parser')
 
 // connect db
 const connectDB = require('./db/connect')
@@ -21,6 +22,8 @@ const notFoundMiddleware = require('./middlewares/not-found')
 // express-midlleware
 app.use(morgan('tiny'))
 app.use(express.json())
+app.use(cookieParser(process.env.JWT_SECRET))
+
 
 app.get("/", (req,res)=>{
     res.send("Welcome my e-commerce website")

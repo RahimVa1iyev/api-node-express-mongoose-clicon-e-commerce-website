@@ -20,3 +20,5 @@ const attachCookiesToResponse = ({res,user}) =>{
         secure: process.env.NODE_ENV === 'production'
     })
 }
+
+module.exports = {createJWT,isVerifyToken,attachCookiesToResponse}

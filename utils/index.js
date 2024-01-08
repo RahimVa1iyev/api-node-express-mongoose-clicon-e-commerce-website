@@ -1,3 +1,4 @@
 const createUserToken = require('./createUserToken')
-
-module.exports = {createUserToken}
+const {createJWT,isVerifyToken,attachCookiesToResponse} = require('./jwt')
+ 
+module.exports = {createUserToken,createJWT,isVerifyToken,attachCookiesToResponse}
