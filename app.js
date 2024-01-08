@@ -8,9 +8,11 @@ const app = express()
 // rest of the packes
 const morgan = require('morgan')
 
-
 // connect db
 const connectDB = require('./db/connect')
+
+// routes
+const autRoutes = require('./routes/authRoute')
 
 // middleware
 const errorHandlerMiddleware = require('./middlewares/error-handler')
@@ -23,6 +25,8 @@ app.use(express.json())
 app.get("/", (req,res)=>{
     res.send("Welcome my e-commerce website")
 })
+
+app.use('/api/v1/auth',autRoutes)
 
 
 // add-middleware

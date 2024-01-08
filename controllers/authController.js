@@ -15,3 +15,5 @@ const register = async (req,res) =>{
 const logout = async (req,res) =>{
     res.status(StatusCodes.OK).json()
 }
+
+module.exports = {login,register,logout}
