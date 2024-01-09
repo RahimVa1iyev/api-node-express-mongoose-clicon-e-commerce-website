@@ -14,6 +14,10 @@ const connectDB = require('./db/connect')
 
 // routes
 const autRoutes = require('./routes/authRoute')
+const userRoutes = require('./routes/userRoute')
+const categoryRoutes = require('./routes/categoryRoute')
+const brandRoutes = require('./routes/brandRoute')
+
 
 // middleware
 const errorHandlerMiddleware = require('./middlewares/error-handler')
@@ -30,6 +34,11 @@ app.get("/", (req,res)=>{
 })
 
 app.use('/api/v1/auth',autRoutes)
+app.use('/api/v1/users',userRoutes)
+app.use('/api/v1/categories',categoryRoutes)
+app.use('/api/v1/brands',brandRoutes)
+
+
 
 
 // add-middleware

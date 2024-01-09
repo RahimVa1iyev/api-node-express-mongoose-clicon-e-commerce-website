@@ -17,27 +17,29 @@ const login = async (req,res) =>{
     if(!isPasswordCorrect) throw new UnauthenticatedError('Email or password is not correct')
 
     const userToken = createUserToken(user)
-    attachCookiesToResponse(res,user)
+    attachCookiesToResponse({res,user})
     res.status(StatusCodes.OK).json({user:userToken})
 }
 
 
 const register = async (req,res) =>{
-    const {name,email,password,confrimPassword} = req.body
-    if(!confrimPassword && password !== confrimPassword) throw new BadRequestError('Confirm password does not match')
+    
+    const {name,email,password,confirmPassword} = req.body
 
-    const role = 'user'
+    if(!confirmPassword && password !== confirmPassword) throw new BadRequestError('Confirm password does not match')
+
+    const role = 'admin'
     const user = await User.create({name,email,password,role})
 
     const userToken = createUserToken(user)
-    attachCookiesToResponse(res,user)
+    attachCookiesToResponse({res,user})
 
     res.status(StatusCodes.CREATED).json({user:userToken})
 }
 
 
 const logout = async (req,res) =>{
-    res.cookies =('token','logout',{
+    res.cookie('token','logout',{
         httpOnly:true,
         expiresIn: new Date(Date.now())
     })

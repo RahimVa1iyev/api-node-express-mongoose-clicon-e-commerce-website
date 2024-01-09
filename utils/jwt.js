@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
 
 const createJWT = (payload) => {
-    const token = jst.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFE_TIME })
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LIFE_TIME })
     return token
 }
 
-const isVerifyToken = ({ token }) => { return jwt.verify(token, process.env.JWT_SECRET) }
+const verifyToken = ({ token }) => { return jwt.verify(token, process.env.JWT_SECRET) }
 
 
 const attachCookiesToResponse = ({res,user}) =>{
@@ -13,12 +13,12 @@ const attachCookiesToResponse = ({res,user}) =>{
 
     const oneDay = 1000 * 60 * 60 * 24
 
-    res.cookies =('token',token,{
+    res.cookie('token',token,{
         httpOnly : true,
-        expiresIn : new Date(Date.now() + oneDay),
+        expires : new Date(Date.now() + oneDay),
         signed: true,
         secure: process.env.NODE_ENV === 'production'
     })
 }
 
-module.exports = {createJWT,isVerifyToken,attachCookiesToResponse}
+module.exports = {createJWT,verifyToken,attachCookiesToResponse}
