@@ -8,6 +8,7 @@ const app = express()
 // rest of the packes
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
+const fileUpload = require('express-fileupload')
 
 // connect db
 const connectDB = require('./db/connect')
@@ -17,6 +18,8 @@ const autRoutes = require('./routes/authRoute')
 const userRoutes = require('./routes/userRoute')
 const categoryRoutes = require('./routes/categoryRoute')
 const brandRoutes = require('./routes/brandRoute')
+const featureRoutes = require('./routes/featureRoute')
+
 
 
 // middleware
@@ -27,6 +30,7 @@ const notFoundMiddleware = require('./middlewares/not-found')
 app.use(morgan('tiny'))
 app.use(express.json())
 app.use(cookieParser(process.env.JWT_SECRET))
+app.use(fileUpload())
 
 
 app.get("/", (req,res)=>{
@@ -37,6 +41,7 @@ app.use('/api/v1/auth',autRoutes)
 app.use('/api/v1/users',userRoutes)
 app.use('/api/v1/categories',categoryRoutes)
 app.use('/api/v1/brands',brandRoutes)
+app.use('/api/v1/features',featureRoutes)
 
 
 

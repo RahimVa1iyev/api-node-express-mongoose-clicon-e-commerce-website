@@ -30,13 +30,9 @@ const updateUser = async (req, res) => {
   console.log(userId);
   const {email,name,password,confirmPassword} = req.body
   
-  
   if(password !== confirmPassword) throw new BadRequestError('Confirm password is not matching')
 
-
-
   const updatedUser = await User.findOneAndUpdate({_id : userId})
-
 
 }
 

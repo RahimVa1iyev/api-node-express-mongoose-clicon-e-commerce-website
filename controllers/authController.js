@@ -23,7 +23,6 @@ const login = async (req,res) =>{
 
 
 const register = async (req,res) =>{
-    
     const {name,email,password,confirmPassword} = req.body
 
     if(!confirmPassword && password !== confirmPassword) throw new BadRequestError('Confirm password does not match')
