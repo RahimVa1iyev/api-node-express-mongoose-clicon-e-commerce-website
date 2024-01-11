@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const cloudinary = require('cloudinary').v2
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -56,8 +56,7 @@ const productSchema = new mongoose.Schema({
     },
     images: [
         {
-            imageUrl: { type: String, required: [true, 'Image is required field'] },
-            status: { type: Boolean, required: [true, 'Image is required field'] }
+            type: String, require: true
         }
     ],
     bestDiscountPercent: {
@@ -82,7 +81,7 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    isNew: {
+    isFeature: {
         type: Boolean,
         default: false,
     },

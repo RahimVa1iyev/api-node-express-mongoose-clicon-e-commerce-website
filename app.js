@@ -10,6 +10,15 @@ const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const fileUpload = require('express-fileupload')
 
+// use Cloudinary.v2
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key:process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET
+});
+
+
 // connect db
 const connectDB = require('./db/connect')
 
@@ -19,6 +28,8 @@ const userRoutes = require('./routes/userRoute')
 const categoryRoutes = require('./routes/categoryRoute')
 const brandRoutes = require('./routes/brandRoute')
 const featureRoutes = require('./routes/featureRoute')
+const productRoutes = require('./routes/productRoute')
+
 
 
 
@@ -30,7 +41,7 @@ const notFoundMiddleware = require('./middlewares/not-found')
 app.use(morgan('tiny'))
 app.use(express.json())
 app.use(cookieParser(process.env.JWT_SECRET))
-app.use(fileUpload())
+app.use(fileUpload({useTempFiles : true}))
 
 
 app.get("/", (req,res)=>{
@@ -42,7 +53,7 @@ app.use('/api/v1/users',userRoutes)
 app.use('/api/v1/categories',categoryRoutes)
 app.use('/api/v1/brands',brandRoutes)
 app.use('/api/v1/features',featureRoutes)
-
+app.use('/api/v1/products',productRoutes)
 
 
 
