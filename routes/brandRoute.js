@@ -8,6 +8,4 @@ const {authenticateUser,authorizePermission} = require('../middlewares/authentic
 router.route('/').post([authenticateUser,authorizePermission('admin')] ,createBrand).get(getAllBrand)
 
 
-
-
 module.exports = router

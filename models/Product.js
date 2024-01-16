@@ -4,10 +4,9 @@ const cloudinary = require('cloudinary').v2
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Brand is require field'],
-        uniquie: [true, 'This brand is exist'],
-        minlength: [2, "Brand can be at least 2 letters"],
-        maxlength: [25, "Brand can be a maximum of 25 characters"],
+        required: [true, 'Product is require field'],
+        minlength: [2, "Product can be at least 2 letters"],
+        maxlength: [100, "Product can be a maximum of 25 characters"],
     },
     categoryId: {
         type: mongoose.Types.ObjectId,
@@ -22,9 +21,9 @@ const productSchema = new mongoose.Schema({
     features: [
         {
             name: { type: String },
-            options: [{
+            option: {
                 type: String
-            }]
+            }
         }
     ],
     colors: [
@@ -34,7 +33,7 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Description is require field'],
         minlength: [50, "Description can be at least 50 characters"],
-        maxlength: [500, "Description can be a maximum of 500 characters"],
+        maxlength: [700, "Description can be a maximum of 500 characters"],
     },
     costPrice: {
         type: Number,
@@ -56,7 +55,8 @@ const productSchema = new mongoose.Schema({
     },
     images: [
         {
-            type: String, require: true
+           imageUrl :  {type: String, require: true},
+           imageStatus : {type :Boolean ,require: true}
         }
     ],
     bestDiscountPercent: {
