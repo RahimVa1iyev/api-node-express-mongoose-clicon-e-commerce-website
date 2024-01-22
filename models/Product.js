@@ -87,8 +87,6 @@ const productSchema = new mongoose.Schema({
         default: false,
     },
 
-
-
 })
 
 productSchema.path('costPrice').validate(function (value) {

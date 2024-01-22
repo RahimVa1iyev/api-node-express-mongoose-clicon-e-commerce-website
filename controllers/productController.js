@@ -29,6 +29,41 @@ const createProduct = async (req, res) => {
     res.status(StatusCodes.CREATED).json({ product })
 }
 
+const getAllProducts = async (req,res) =>{
+    const products = await Product.find({}).populate({
+        path: 'categoryId',
+        select: 'name id' // categoryId'nin 'name' ve 'id' alanlarını getir
+    })
+    .populate({
+        path: 'brandId',
+        select: 'name id' // brandId'nin 'name' ve 'id' alanlarını getir
+    });
+    console.log(products);
+
+    res.status(StatusCodes.OK).json({products})
+}
+
+const getBestDealsProducts = async (req,res) =>{
+    const products = await Product.find({bestDiscountPercent : {$gt :0}})
+    res.status(StatusCodes.OK).json({products})
+}
+const getFeaturedProducts = async (req,res) =>{
+    const products = await Product.find({isFeature : true})
+    res.status(StatusCodes.OK).json({products})
+}
+const getBestSellerProducts = async (req,res) =>{
+    const products = await Product.find({sellerCount : {$gt:0}})
+    res.status(StatusCodes.OK).json({products})
+}
+const getMostViewProducts = async (req,res) =>{
+    const products = await Product.find({viewCount : {$gt:0}})
+    res.status(StatusCodes.OK).json({products})
+}
+const getNewProducts = async (req,res) =>{
+    const products = await Product.find({isNew :true})
+    res.status(StatusCodes.OK).json({products})
+}
+
 const uploadImage = async (req, res) => {
     const { productId } = req.params
 
@@ -57,4 +92,4 @@ const uploadImage = async (req, res) => {
 
 }
 
-module.exports = { uploadImage, createProduct }
+module.exports = { uploadImage, createProduct ,getAllProducts,getBestDealsProducts,getFeaturedProducts,getBestSellerProducts,getMostViewProducts }
