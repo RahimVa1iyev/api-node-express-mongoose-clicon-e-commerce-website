@@ -20,7 +20,9 @@ const createBrand = async (req, res) => {
 }
 
 const getAllBrand = async (req,res) =>{
-    const brands = await Brand.find({}).populate('categories').exec() // Populate the 'brands' field
+    const brands = await Brand.find({}).populate('categories', '_id name') // Projeksiyon ile sadece '_id' ve 'name' alanlarını al
+    .exec();
+ // Populate the 'brands' field
     res.status(StatusCodes.OK).json({brands})
 }
 

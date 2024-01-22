@@ -1,5 +1,6 @@
 require('dotenv').config()
 require('express-async-errors')
+const cors = require('cors'); // Add this line
 
 // express
 const express = require('express')
@@ -9,6 +10,10 @@ const app = express()
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const fileUpload = require('express-fileupload')
+const allowedOrigin = 'http://localhost:5173';
+app.use(cors({
+  origin: allowedOrigin,
+}));
 
 // use Cloudinary.v2
 const cloudinary = require('cloudinary').v2;

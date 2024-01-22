@@ -13,6 +13,7 @@ const productSchema = new mongoose.Schema({
         require: true,
         ref: 'Category'
     },
+    
     brandId: {
         type: mongoose.Types.ObjectId,
         require: true,
