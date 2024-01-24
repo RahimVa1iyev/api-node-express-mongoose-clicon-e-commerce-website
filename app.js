@@ -35,6 +35,7 @@ const brandRoutes = require('./routes/brandRoute')
 const featureRoutes = require('./routes/featureRoute')
 const productRoutes = require('./routes/productRoute')
 const sliderRoutes = require('./routes/sliderRoute')
+const reviewRoutes = require('./routes/reviewRoute')
 
 
 
@@ -61,6 +62,8 @@ app.use('/api/v1/brands',brandRoutes)
 app.use('/api/v1/features',featureRoutes)
 app.use('/api/v1/products',productRoutes)
 app.use('/api/v1/sliders',sliderRoutes)
+app.use('/api/v1/reviews',reviewRoutes)
+
 
 // add-middleware
 app.use(errorHandlerMiddleware)

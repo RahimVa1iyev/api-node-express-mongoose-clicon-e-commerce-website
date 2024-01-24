@@ -19,10 +19,13 @@ const productSchema = new mongoose.Schema({
         require: true,
         ref: 'Brand'
     },
-    review: [{
+    reviews: [{
         type: mongoose.Types.ObjectId,
         ref: 'Review'
     }],
+    rate : {
+        type : Number
+    },
     features: [
         {
             name: { type: String },

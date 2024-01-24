@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
         required :[true,'Password is provided'],
         minlength:6
     },
-    review: [{
+    reviews: [{
         type: mongoose.Types.ObjectId,
         ref: 'Review'
     }],

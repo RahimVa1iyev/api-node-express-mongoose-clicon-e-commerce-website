@@ -27,7 +27,7 @@ const register = async (req,res) =>{
 
     if(!confirmPassword && password !== confirmPassword) throw new BadRequestError('Confirm password does not match')
 
-    const role = 'admin'
+    const role = 'user'
     const user = await User.create({name,email,password,role})
 
     const userToken = createUserToken(user)
