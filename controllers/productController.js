@@ -29,40 +29,98 @@ const createProduct = async (req, res) => {
     res.status(StatusCodes.CREATED).json({ product })
 }
 
-const getAllProducts = async (req,res) =>{
+const getAllProducts = async (req, res) => {
     const products = await Product.find({}).populate({
         path: 'categoryId',
         select: 'name id' // categoryId'nin 'name' ve 'id' alanlarını getir
     })
-    .populate({
-        path: 'brandId',
-        select: 'name id' // brandId'nin 'name' ve 'id' alanlarını getir
+        .populate({
+            path: 'brandId',
+            select: 'name id' // brandId'nin 'name' ve 'id' alanlarını getir
+        });
+
+    res.status(StatusCodes.OK).json({ products })
+}
+
+const getBestDealsProducts = async (req, res) => {
+    const products = await Product.find({ bestDiscountPercent: { $gt: 0 } })
+    res.status(StatusCodes.OK).json({ products })
+}
+const getFeaturedProducts = async (req, res) => {
+    const products = await Product.find({ isFeature: true })
+    res.status(StatusCodes.OK).json({ products })
+}
+const getBestSellerProducts = async (req, res) => {
+    const products = await Product.find({ sellerCount: { $gt: 0 } })
+    res.status(StatusCodes.OK).json({ products })
+}
+const getMostViewProducts = async (req, res) => {
+    const products = await Product.find({ viewCount: { $gt: 0 } })
+    res.status(StatusCodes.OK).json({ products })
+}
+
+const filterAndSortProducts = async (req, res) => {
+    const { categoryId, brandId, min_price, max_price, page, page_size, name , price } = req.query
+    console.log(req.query);
+    //    filter options
+    const filter = {}
+    if (categoryId) filter.categoryId = categoryId
+    if (brandId) filter.brandId = brandId
+    if (min_price) filter.salePrice = { $gte: parseFloat(min_price) };
+    if (max_price) {
+        if (!filter.salePrice) filter.salePrice = {};
+        filter.salePrice.$lte = parseFloat(max_price);
+    }
+
+    // sort options
+    const sortOptions = {}
+    if (name === 'a-z') sortOptions.name = 1
+    if (name === 'z-a') sortOptions.name =-1
+    if (price === 'most') sortOptions.salePrice = 1
+    if (price === 'least') sortOptions.salePrice = -1
+
+
+
+    // Calculate pagination
+    const currentPage = parseInt(page) || 1;
+    const itemsPerPage = parseInt(page_size) || 5;
+    const skipItems = (currentPage - 1) * itemsPerPage;
+
+    // Query MongoDB with filters and pagination
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / itemsPerPage);
+    const products = await Product.find(filter).sort(sortOptions).skip(skipItems).limit(itemsPerPage);
+
+    res.status(StatusCodes.OK).json({
+        totalProducts,
+        totalPages,
+        currentPage,
+        pageSize: itemsPerPage,
+        products,
     });
-    console.log(products);
 
-    res.status(StatusCodes.OK).json({products})
 }
 
-const getBestDealsProducts = async (req,res) =>{
-    const products = await Product.find({bestDiscountPercent : {$gt :0}})
-    res.status(StatusCodes.OK).json({products})
+
+
+const getProductById = async (req, res) => {
+    const { id: productId } = req.params
+    const product = await Product.findOne({ _id: productId }).populate({
+        path: 'categoryId',
+        select: 'name id' // categoryId'nin 'name' ve 'id' alanlarını getir
+    })
+        .populate({
+            path: 'brandId',
+            select: 'name id' // brandId'nin 'name' ve 'id' alanlarını getir
+        });
+
+    if (!product) throw new NotFoundError(`Product not found by Id : ${productId}`)
+    const relatedProducts = await Product.find({ categoryId: product.categoryId._id })
+    res.status(StatusCodes.OK).json({ product, relatedProducts })
 }
-const getFeaturedProducts = async (req,res) =>{
-    const products = await Product.find({isFeature : true})
-    res.status(StatusCodes.OK).json({products})
-}
-const getBestSellerProducts = async (req,res) =>{
-    const products = await Product.find({sellerCount : {$gt:0}})
-    res.status(StatusCodes.OK).json({products})
-}
-const getMostViewProducts = async (req,res) =>{
-    const products = await Product.find({viewCount : {$gt:0}})
-    res.status(StatusCodes.OK).json({products})
-}
-const getNewProducts = async (req,res) =>{
-    const products = await Product.find({isNew :true})
-    res.status(StatusCodes.OK).json({products})
-}
+
+
+
 
 const uploadImage = async (req, res) => {
     const { productId } = req.params
@@ -72,15 +130,15 @@ const uploadImage = async (req, res) => {
     }
 
     const uploadedImages = [];
-        const productImages = req.files.images
+    const productImages = req.files.images
 
-        for (const image of productImages) {
-            const result = await upload(image)
-            uploadedImages.push({ imageStatus: false, imageUrl: result.secure_url });
-        }
+    for (const image of productImages) {
+        const result = await upload(image)
+        uploadedImages.push({ imageStatus: false, imageUrl: result.secure_url });
+    }
 
-        const result = await upload(req.files.image)
-        uploadedImages.push({ imageStatus: true, imageUrl: result.secure_url });
+    const result = await upload(req.files.image)
+    uploadedImages.push({ imageStatus: true, imageUrl: result.secure_url });
 
 
     const product = await Product.findOne({ _id: productId })
@@ -92,4 +150,4 @@ const uploadImage = async (req, res) => {
 
 }
 
-module.exports = { uploadImage, createProduct ,getAllProducts,getBestDealsProducts,getFeaturedProducts,getBestSellerProducts,getMostViewProducts }
+module.exports = { uploadImage, createProduct, getAllProducts, getBestDealsProducts, getFeaturedProducts, getBestSellerProducts, getMostViewProducts, getProductById, filterAndSortProducts }

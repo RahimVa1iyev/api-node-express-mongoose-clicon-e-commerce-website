@@ -1,11 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const {createCategory,getAllCategory} = require('../controllers/categoryController')
+const {createCategory,getAllCategory,updateCategory} = require('../controllers/categoryController')
 
 const {authenticateUser,authorizePermission} = require('../middlewares/authentication')
 
 
 router.route('/').post([authenticateUser,authorizePermission('admin')] ,createCategory).get(getAllCategory)
+router.route('/:id').patch(updateCategory)
 
 
 

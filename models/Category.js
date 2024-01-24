@@ -1,3 +1,4 @@
+const { string } = require('joi')
 const mongoose = require('mongoose')
 
 
@@ -9,8 +10,9 @@ const categorySchema = new mongoose.Schema({
         minlength: [2, "Category can be at least 2 letters"],
         maxlength: [25, "Category can be a maximum of 25 characters"],
     },
-    
-    products : [{type : mongoose.Types.ObjectId , ref: 'Product'}]
+    products : [{type : mongoose.Types.ObjectId , ref: 'Product'}],
+    image : {type : String}
+
 
 })
 
