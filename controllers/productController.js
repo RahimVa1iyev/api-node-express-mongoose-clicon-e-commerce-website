@@ -61,7 +61,6 @@ const getMostViewProducts = async (req, res) => {
 
 const filterAndSortProducts = async (req, res) => {
     const { categoryId, brandId, min_price, max_price, page, page_size, name , price } = req.query
-    console.log(req.query);
     //    filter options
     const filter = {}
     if (categoryId) filter.categoryId = categoryId
@@ -78,8 +77,6 @@ const filterAndSortProducts = async (req, res) => {
     if (name === 'z-a') sortOptions.name =-1
     if (price === 'most') sortOptions.salePrice = 1
     if (price === 'least') sortOptions.salePrice = -1
-
-
 
     // Calculate pagination
     const currentPage = parseInt(page) || 1;

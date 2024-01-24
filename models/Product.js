@@ -13,12 +13,16 @@ const productSchema = new mongoose.Schema({
         require: true,
         ref: 'Category'
     },
-    
+
     brandId: {
         type: mongoose.Types.ObjectId,
         require: true,
         ref: 'Brand'
     },
+    review: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Review'
+    }],
     features: [
         {
             name: { type: String },
@@ -56,8 +60,8 @@ const productSchema = new mongoose.Schema({
     },
     images: [
         {
-           imageUrl :  {type: String, require: true},
-           imageStatus : {type :Boolean ,require: true}
+            imageUrl: { type: String, require: true },
+            imageStatus: { type: Boolean, require: true }
         }
     ],
     bestDiscountPercent: {
@@ -86,6 +90,7 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+
 
 })
 

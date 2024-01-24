@@ -24,10 +24,15 @@ const userSchema = new mongoose.Schema({
         required :[true,'Password is provided'],
         minlength:6
     },
+    review: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Review'
+    }],
     role:{
         type:String,
         enum :['admin','user']
     }
+    
 })
 
 userSchema.pre('save', async function(){
