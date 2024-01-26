@@ -51,12 +51,15 @@ const getFeaturedProducts = async (req, res) => {
     res.status(StatusCodes.OK).json({ products })
 }
 const getBestSellerProducts = async (req, res) => {
-    const products = await Product.find({ sellerCount: { $gt: 0 } })
+    const products = await Product.find({ sellerCount: { $gt: 0 } }).sort({rate : -1})
     res.status(StatusCodes.OK).json({ products })
 }
 const getMostViewProducts = async (req, res) => {
-    const products = await Product.find({ viewCount: { $gt: 0 } })
+    const products = await Product.find({ viewCount: { $gt: 0 } }).sort({rate : -1})
     res.status(StatusCodes.OK).json({ products })
+}
+const topRatedProducts = async (req,res) =>{
+    const products = await Product.find({rate : {$gt:0}}).sort({rate : -1})
 }
 
 const filterAndSortProducts = async (req, res) => {
@@ -147,4 +150,4 @@ const uploadImage = async (req, res) => {
 
 }
 
-module.exports = { uploadImage, createProduct, getAllProducts, getBestDealsProducts, getFeaturedProducts, getBestSellerProducts, getMostViewProducts, getProductById, filterAndSortProducts }
+module.exports = { uploadImage, createProduct, getAllProducts, getBestDealsProducts, getFeaturedProducts, getBestSellerProducts, getMostViewProducts, getProductById,topRatedProducts, filterAndSortProducts }
