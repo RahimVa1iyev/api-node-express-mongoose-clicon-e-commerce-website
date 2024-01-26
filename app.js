@@ -65,11 +65,18 @@ app.use('/api/v1/sliders',sliderRoutes)
 app.use('/api/v1/reviews',reviewRoutes)
 
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
+
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // add-middleware
 app.use(errorHandlerMiddleware)
 app.use(notFoundMiddleware)
 
 const port = process.env.PORT || 5000
+
 
 const start = async () =>{
     await connectDB(process.env.MONGO_URL).then(res=> console.log("Database succesfully connect")).catch(err => console.log(`Fail db as ${err}`))
