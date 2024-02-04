@@ -26,4 +26,10 @@ const getAllBrand = async (req,res) =>{
     res.status(StatusCodes.OK).json({brands})
 }
 
-module.exports = {createBrand,getAllBrand}
+const deleteBrand = async (req,res) => {
+    const {id:brandId} = req.params
+    const brands = await Brand.findOneAndDelete({_id : brandId})
+    res.status(StatusCodes.OK).json({})
+}
+
+module.exports = {createBrand,getAllBrand,deleteBrand}
