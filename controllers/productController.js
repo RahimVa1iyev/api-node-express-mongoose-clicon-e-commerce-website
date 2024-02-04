@@ -62,12 +62,51 @@ const topRatedProducts = async (req,res) =>{
     const products = await Product.find({rate : {$gt:0}}).sort({rate : -1})
 }
 
+// const filterAndSortProducts = async (req, res) => {
+//     const { categoryId, brandId, min_price, max_price, page, page_size, name , price } = req.query
+//     //    filter options
+//     const filter = {}
+//     if (categoryId) filter.categoryId = categoryId
+//     if (brandId) filter.brandId = brandId
+//     if (min_price) filter.salePrice = { $gte: parseFloat(min_price) };
+//     if (max_price) {
+//         if (!filter.salePrice) filter.salePrice = {};
+//         filter.salePrice.$lte = parseFloat(max_price);
+//     }
+
+//     // sort options
+//     const sortOptions = {}
+//     if (name === 'a-z') sortOptions.name = 1
+//     if (name === 'z-a') sortOptions.name =-1
+//     if (price === 'most') sortOptions.salePrice = 1
+//     if (price === 'least') sortOptions.salePrice = -1
+
+//     // Calculate pagination
+//     const currentPage = parseInt(page) || 1;
+//     const itemsPerPage = parseInt(page_size) || 5;
+//     const skipItems = (currentPage - 1) * itemsPerPage;
+
+//     // Query MongoDB with filters and pagination
+//     const totalProducts = await Product.countDocuments(filter);
+//     const totalPages = Math.ceil(totalProducts / itemsPerPage);
+//     const products = await Product.find(filter).sort(sortOptions).skip(skipItems).limit(itemsPerPage);
+
+//     res.status(StatusCodes.OK).json({
+//         totalProducts,
+//         totalPages,
+//         currentPage,
+//         pageSize: itemsPerPage,
+//         products,
+//     });
+
+// }
+
 const filterAndSortProducts = async (req, res) => {
-    const { categoryId, brandId, min_price, max_price, page, page_size, name , price } = req.query
+    const { categoryId, brandId, min_price, max_price, page, page_size, name, price } = req.query;
     //    filter options
-    const filter = {}
-    if (categoryId) filter.categoryId = categoryId
-    if (brandId) filter.brandId = brandId
+    const filter = {};
+    if (categoryId) filter.categoryId = categoryId;
+    if (brandId) filter.brandId = brandId;
     if (min_price) filter.salePrice = { $gte: parseFloat(min_price) };
     if (max_price) {
         if (!filter.salePrice) filter.salePrice = {};
@@ -75,15 +114,15 @@ const filterAndSortProducts = async (req, res) => {
     }
 
     // sort options
-    const sortOptions = {}
-    if (name === 'a-z') sortOptions.name = 1
-    if (name === 'z-a') sortOptions.name =-1
-    if (price === 'most') sortOptions.salePrice = 1
-    if (price === 'least') sortOptions.salePrice = -1
+    const sortOptions = {};
+    if (name === 'a-z') sortOptions.name = 1;
+    if (name === 'z-a') sortOptions.name = -1;
+    if (price === 'most') sortOptions.salePrice = 1;
+    if (price === 'least') sortOptions.salePrice = -1;
 
     // Calculate pagination
     const currentPage = parseInt(page) || 1;
-    const itemsPerPage = parseInt(page_size) || 5;
+    const itemsPerPage = parseInt(page_size) || 2;
     const skipItems = (currentPage - 1) * itemsPerPage;
 
     // Query MongoDB with filters and pagination
@@ -91,15 +130,22 @@ const filterAndSortProducts = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / itemsPerPage);
     const products = await Product.find(filter).sort(sortOptions).skip(skipItems).limit(itemsPerPage);
 
+    // Generate next and prev links
+    const baseUrl = req.protocol + '://' + req.get('host') + req.baseUrl;
+    const nextUrl = currentPage < totalPages ? `${baseUrl}?page=${currentPage + 1}` : null;
+    const prevUrl = currentPage > 1 ? `${baseUrl}?page=${currentPage - 1}` : null;
+
     res.status(StatusCodes.OK).json({
         totalProducts,
         totalPages,
         currentPage,
         pageSize: itemsPerPage,
-        products,
+        next: nextUrl,
+        prev: prevUrl,
+        products
     });
-
 }
+
 
 
 
