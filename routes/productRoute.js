@@ -14,6 +14,6 @@ router.route('/featured/products').get(getFeaturedProducts)
 router.route('/best-seller/products').get(getBestSellerProducts)
 router.route('/most-view/products').get(getMostViewProducts)
 router.route('/shop/filter-sort').get(filterAndSortProducts)
-router.route('/top-rated-products').get(topRatedProducts)
+router.route('/top-rated/products').get(topRatedProducts)
 
 module.exports = router
