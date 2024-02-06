@@ -28,7 +28,7 @@ const productSchema = new mongoose.Schema({
     },
     features: [
         {
-            name: { type: String },
+            name: { type: String},
             option: {
                 type: String
             }

@@ -15,6 +15,7 @@ const upload = async (image) =>{
         use_filename: true,
         folder: 'clicon',
     });
+    console.log('result',result);
 
     return result
 }

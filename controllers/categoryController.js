@@ -5,12 +5,8 @@ const deleteImage = require('../utils/delete')
 
 
 const createCategory = async (req, res) => {
-    const { name } = req.body
-
-    const category = await Category.create({ name })
-
+    const category = await Category.create(req.body)
     res.status(StatusCodes.CREATED).json({ category })
-
 }
 
 const updateCategory = async (req, res) => {
@@ -24,8 +20,10 @@ const updateCategory = async (req, res) => {
         const result = await upload(req.files.image)
         updateFields.image = result.secure_url
     }
-    if (req.body.name) {
+    if (req.body) {
         updateFields.name = req.body.name;
+        updateFields.features = req.body.featureIds
+        updateFields.brands = req.body.brands
     }
 
     const updatedCategory = await Category.findOneAndUpdate({ _id: categoryId }, updateFields, { new: true, runValidators: true })
@@ -39,7 +37,7 @@ const updateCategory = async (req, res) => {
 }
 
 const getAllCategory = async (req, res) => {
-    const categories = await Category.find({})// Populate the 'brands' field
+    const categories = await Category.find({}).populate({path : 'features'}).populate({path : 'brands'})// Populate the 'brands' field
     res.status(StatusCodes.OK).json({ categories })
 }
 

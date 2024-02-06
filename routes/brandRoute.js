@@ -5,7 +5,7 @@ const {createBrand,getAllBrand,deleteBrand} = require('../controllers/brandContr
 const {authenticateUser,authorizePermission} = require('../middlewares/authentication')
 
 
-router.route('/').post([authenticateUser,authorizePermission('admin')] ,createBrand).get(getAllBrand)
+router.route('/').post(createBrand).get(getAllBrand)
 router.route('/:id').delete(deleteBrand)
 
 
