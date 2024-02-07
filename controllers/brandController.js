@@ -5,7 +5,8 @@ const { StatusCodes } = require('http-status-codes')
 
 
 const createBrand = async (req, res) => {
-    const { name, categoryIds } = req.body
+    const { name, categoryIds , features } = req.body
+    console.log(features);
     console.log('category', categoryIds);
 
     const brand = await Brand.create({ name })
@@ -15,6 +16,7 @@ const createBrand = async (req, res) => {
     if (!categories) throw new NotFoundError(`Category not found by ids : ${categoryIds}`)
 
     brand.categories = categories.map(category => category._id);
+    brand.features = features
 
     for (const category of categories) {
         category.brands.push(brand._id);

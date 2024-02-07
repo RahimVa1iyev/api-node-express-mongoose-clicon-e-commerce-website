@@ -5,7 +5,13 @@ const deleteImage = require('../utils/delete')
 
 
 const createCategory = async (req, res) => {
-    const category = await Category.create(req.body)
+    const {image} = req.files
+    console.log(image);
+    const result = await upload(image)
+    console.log('result',result);
+    const imageUrl = result.secure_url
+    const category = await Category.create({...req.body , image : imageUrl})
+    console.log('category',category);
     res.status(StatusCodes.CREATED).json({ category })
 }
 

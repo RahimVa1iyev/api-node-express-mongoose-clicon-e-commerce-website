@@ -14,8 +14,6 @@ const categorySchema = new mongoose.Schema({
     products : [{type : mongoose.Types.ObjectId , ref: 'Product'}],
     brands : [{type:mongoose.Types.ObjectId , ref : 'Brand'}],
     image : {type : String}
-
-
 })
 
 module.exports = mongoose.model('Category', categorySchema)

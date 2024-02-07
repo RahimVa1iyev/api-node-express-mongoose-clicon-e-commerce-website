@@ -5,7 +5,7 @@ const {createCategory,getAllCategory,updateCategory} = require('../controllers/c
 const {authenticateUser,authorizePermission} = require('../middlewares/authentication')
 
 
-router.route('/').post([authenticateUser,authorizePermission('admin')] ,createCategory).get(getAllCategory)
+router.route('/').post(createCategory).get(getAllCategory)
 router.route('/:id').patch(updateCategory)
 
 
