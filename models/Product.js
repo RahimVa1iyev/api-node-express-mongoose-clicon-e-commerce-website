@@ -1,3 +1,4 @@
+const { number } = require('joi');
 const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2
 
@@ -13,7 +14,6 @@ const productSchema = new mongoose.Schema({
         require: true,
         ref: 'Category'
     },
-
     brandId: {
         type: mongoose.Types.ObjectId,
         require: true,
@@ -33,9 +33,6 @@ const productSchema = new mongoose.Schema({
                 type: String
             }
         }
-    ],
-    colors: [
-        { type: String, required: [true, 'Color is required field'] }
     ],
     description: {
         type: String,
@@ -81,9 +78,9 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    stockStatus: {
-        type: Boolean,
-        default: false,
+    stockCount: {
+        type: Number,
+        default: 0,
     },
     isHot: {
         type: Boolean,
