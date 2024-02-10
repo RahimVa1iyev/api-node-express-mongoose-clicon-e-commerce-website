@@ -70,6 +70,9 @@ const productSchema = new mongoose.Schema({
         min: [0, "Discount percent can be as low as 0%"],
         max: [100, "Discoun percent  can be a maximum of 100%"],
     },
+    seriaNo: {
+        type: Number,
+    },
     sellerCount: {
         type: Number,
         default: 0,

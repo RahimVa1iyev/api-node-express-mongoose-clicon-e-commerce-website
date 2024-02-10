@@ -28,6 +28,7 @@ const createProduct = async (req, res) => {
     res.status(StatusCodes.CREATED).json({ id : product._id })
 }
 
+
 const getAllProducts = async (req, res) => {
     const products = await Product.find({}).populate({
         path: 'categoryId',
@@ -60,8 +61,6 @@ const getMostViewProducts = async (req, res) => {
 const topRatedProducts = async (req,res) =>{
     const products = await Product.find({rate : {$gt:0}}).sort({rate : -1})
 }
-
-
 
 const filterAndSortProducts = async (req, res) => {
     const { categoryId, brandId, min_price, max_price, page, page_size, name, price } = req.query;
@@ -108,6 +107,26 @@ const filterAndSortProducts = async (req, res) => {
     });
 }
 
+const filterProductsInDetail = async (req, res) => {
+    const { seriaNo } = req.params;
+    const query = req.query;
+
+    const products = await Product.find({ seriaNo: seriaNo });
+
+    const filteredProducts = products.filter((product) => {
+        for (const key in query) {
+            if (!product.features.find((feature) => feature.name === key && feature.option === query[key])) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    const product = filteredProducts[0]
+    res.status(StatusCodes.OK).json({product})
+};
+
+
 const getProductById = async (req, res) => {
     const { id: productId } = req.params
     const product = await Product.findOne({ _id: productId }).populate({
@@ -153,4 +172,4 @@ const uploadImage = async (req, res) => {
 
 }
 
-module.exports = { uploadImage, createProduct, getAllProducts, getBestDealsProducts, getFeaturedProducts, getBestSellerProducts, getMostViewProducts, getProductById,topRatedProducts, filterAndSortProducts }
+module.exports = { uploadImage, createProduct, getAllProducts, getBestDealsProducts, getFeaturedProducts, getBestSellerProducts, getMostViewProducts, getProductById,topRatedProducts, filterAndSortProducts,filterProductsInDetail }
