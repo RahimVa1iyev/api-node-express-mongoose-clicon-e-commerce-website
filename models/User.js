@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
+const { boolean } = require('joi')
 
 
 const userSchema = new mongoose.Schema({
@@ -21,7 +22,6 @@ const userSchema = new mongoose.Schema({
     },
     userName : {
         type:String,
-        required: [true,"Name is required field"],
         minlength : [2,"Name must be more than 2 letters"],
         maxlength : [25,"Name must be more than 25 letters"],
     },
@@ -42,7 +42,10 @@ const userSchema = new mongoose.Schema({
     role:{
         type:String,
         enum :['admin','user']
-    }
+    },
+    verificationToken : {type : String},
+    isVerified : {type: Boolean , default:false},
+    verified:{type: Date}
 })
 
 userSchema.pre('save', async function(){
