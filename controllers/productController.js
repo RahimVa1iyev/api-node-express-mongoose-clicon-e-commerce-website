@@ -138,11 +138,11 @@ const getProductById = async (req, res) => {
     const { id: productId } = req.params
     const product = await Product.findOne({ _id: productId }).populate({
         path: 'categoryId',
-        select: 'name id' // categoryId'nin 'name' ve 'id' alanlarını getir
+        select: 'name id ' // categoryId'nin 'name' ve 'id' alanlarını getir
     })
         .populate({
             path: 'brandId',
-            select: 'name id' // brandId'nin 'name' ve 'id' alanlarını getir
+            select: 'name id features' // brandId'nin 'name' ve 'id' alanlarını getir
         });
 
     if (!product) throw new NotFoundError(`Product not found by Id : ${productId}`)
