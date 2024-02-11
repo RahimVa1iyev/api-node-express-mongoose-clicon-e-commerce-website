@@ -19,14 +19,20 @@ const createProduct = async (req, res) => {
 
     const product = await Product.create(req.body)
 
-    existCategory.products = product._id
-    existBarnd.products = product._id
+    existCategory.products.push(product._id)
+    existBarnd.products.push(product._id)
 
     existCategory.save()
     existBarnd.save()
 
-    res.status(StatusCodes.CREATED).json({ id : product._id })
+    res.status(StatusCodes.CREATED).json({ id: product._id })
 }
+
+const updateProduct = async (req, res) => {
+    const { productId } = req.params;
+    const product = await Product.findById(productId, req.body); // Use findById instead of find
+};
+
 
 
 const getAllProducts = async (req, res) => {
@@ -51,15 +57,15 @@ const getFeaturedProducts = async (req, res) => {
     res.status(StatusCodes.OK).json({ products })
 }
 const getBestSellerProducts = async (req, res) => {
-    const products = await Product.find({ sellerCount: { $gt: 0 } }).sort({rate : -1})
+    const products = await Product.find({ sellerCount: { $gt: 0 } }).sort({ rate: -1 })
     res.status(StatusCodes.OK).json({ products })
 }
 const getMostViewProducts = async (req, res) => {
-    const products = await Product.find({ viewCount: { $gt: 0 } }).sort({rate : -1})
+    const products = await Product.find({ viewCount: { $gt: 0 } }).sort({ rate: -1 })
     res.status(StatusCodes.OK).json({ products })
 }
-const topRatedProducts = async (req,res) =>{
-    const products = await Product.find({rate : {$gt:0}}).sort({rate : -1})
+const topRatedProducts = async (req, res) => {
+    const products = await Product.find({ rate: { $gt: 0 } }).sort({ rate: -1 })
 }
 
 const filterAndSortProducts = async (req, res) => {
@@ -112,6 +118,7 @@ const filterProductsInDetail = async (req, res) => {
     const query = req.query;
 
     const products = await Product.find({ seriaNo: seriaNo });
+    if(!products) return NotFoundError(`Product not found by seriaNo :${seriaNo}`)
 
     const filteredProducts = products.filter((product) => {
         for (const key in query) {
@@ -123,7 +130,7 @@ const filterProductsInDetail = async (req, res) => {
     });
 
     const product = filteredProducts[0]
-    res.status(StatusCodes.OK).json({product})
+    res.status(StatusCodes.OK).json({ product })
 };
 
 
@@ -172,4 +179,4 @@ const uploadImage = async (req, res) => {
 
 }
 
-module.exports = { uploadImage, createProduct, getAllProducts, getBestDealsProducts, getFeaturedProducts, getBestSellerProducts, getMostViewProducts, getProductById,topRatedProducts, filterAndSortProducts,filterProductsInDetail }
+module.exports = { uploadImage, createProduct, getAllProducts, updateProduct, getBestDealsProducts, getFeaturedProducts, getBestSellerProducts, getMostViewProducts, getProductById, topRatedProducts, filterAndSortProducts, filterProductsInDetail }
