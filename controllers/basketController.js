@@ -1,5 +1,6 @@
 const BasketItem = require('../models/BasketItem')
 const { StatusCodes } = require('http-status-codes')
+const { calculatePercent } = require('../utils')
 
 
 const addBasketItem = async (req,res) =>{
@@ -22,10 +23,12 @@ const addBasketItem = async (req,res) =>{
 
 const getAllBasketItems = async (req,res) =>{
     const {userId} = req.user
-    const basketItems = await BasketItem.find({ userId: userId }).populate('productId', 'name salePrice , images');
+    const basketItems = await BasketItem.find({ userId: userId }).populate('productId', 'name salePrice discountPercent bestDiscountPercent images');
     let totalAmount = 0
      basketItems.forEach((item) => {
-        totalAmount += item.productId.salePrice * item.count
+        const {salePrice,discountPercent,bestDiscountPercent} = item.productId
+        const calculatedPercent = discountPercent ? calculatePercent(salePrice,discountPercent) : calculatePercent(salePrice,bestDiscountPercent)
+        totalAmount += calculatedPercent * item.count
     })
     res.status(StatusCodes.OK).json({basketItems,totalAmount})
 }

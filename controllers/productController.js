@@ -138,15 +138,17 @@ const getProductById = async (req, res) => {
     const { id: productId } = req.params
     const product = await Product.findOne({ _id: productId }).populate({
         path: 'categoryId',
-        select: 'name id ' // categoryId'nin 'name' ve 'id' alanlarını getir
+        select: 'name id ' 
     })
         .populate({
             path: 'brandId',
-            select: 'name id features' // brandId'nin 'name' ve 'id' alanlarını getir
+            select: 'name id features' 
         });
 
     if (!product) throw new NotFoundError(`Product not found by Id : ${productId}`)
+
     const relatedProducts = await Product.find({ categoryId: product.categoryId._id })
+    
     res.status(StatusCodes.OK).json({ product, relatedProducts })
 }
 

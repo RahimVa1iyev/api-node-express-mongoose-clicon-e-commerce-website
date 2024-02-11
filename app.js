@@ -34,6 +34,7 @@ const productRoutes = require('./routes/productRoute')
 const sliderRoutes = require('./routes/sliderRoute')
 const reviewRoutes = require('./routes/reviewRoute')
 const basketItemRoutes = require('./routes/basketItemRoute')
+const orderRoutes = require('./routes/orderRoute')
 
 
 
@@ -62,6 +63,7 @@ app.use('/api/v1/products',productRoutes)
 app.use('/api/v1/sliders',sliderRoutes)
 app.use('/api/v1/reviews',reviewRoutes)
 app.use('/api/v1/basketItems',basketItemRoutes)
+app.use('/api/v1/orders',orderRoutes)
 
 
 const swaggerUi = require('swagger-ui-express');

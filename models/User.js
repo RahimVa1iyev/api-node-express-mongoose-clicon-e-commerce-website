@@ -19,6 +19,17 @@ const userSchema = new mongoose.Schema({
             message : 'Please provide valid email'
         }
     },
+    userName : {
+        type:String,
+        required: [true,"Name is required field"],
+        minlength : [2,"Name must be more than 2 letters"],
+        maxlength : [25,"Name must be more than 25 letters"],
+    },
+    address : {
+        type : String,
+        minlength : [2,"Name must be more than 2 letters"],
+        maxlength : [100,"Name must be more than 100 letters"],
+    },
     password:{
         type : String,
         required :[true,'Password is provided'],
@@ -32,7 +43,6 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum :['admin','user']
     }
-    
 })
 
 userSchema.pre('save', async function(){
