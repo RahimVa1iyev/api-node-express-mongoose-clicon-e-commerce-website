@@ -138,7 +138,7 @@ const getProductById = async (req, res) => {
     const { id: productId } = req.params
     const product = await Product.findOne({ _id: productId }).populate({
         path: 'categoryId',
-        select: 'name id ' 
+         
     })
         .populate({
             path: 'brandId',

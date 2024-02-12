@@ -20,7 +20,7 @@ const login = async (req,res) =>{
     const isPasswordCorrect = await user.comparePassword(password)
     if(!isPasswordCorrect) throw new UnauthenticatedError('Email or password is not correct')
 
-    if(!user.verified) throw new UnauthenticatedError('Please verify your email')
+    // if(!user.verified) throw new UnauthenticatedError('Please verify your email')
 
     const userToken = createUserToken(user)
     attachCookiesToResponse({res,user})
