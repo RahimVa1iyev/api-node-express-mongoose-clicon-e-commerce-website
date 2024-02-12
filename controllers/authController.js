@@ -16,8 +16,10 @@ const login = async (req,res) =>{
 
     const user = await User.findOne({email})
     if(!user) throw new NotFoundError('User not found')
+    
 
     const isPasswordCorrect = await user.comparePassword(password)
+    console.log(isPasswordCorrect);
     if(!isPasswordCorrect) throw new UnauthenticatedError('Email or password is not correct')
 
     if(!user.verified) throw new UnauthenticatedError('Please verify your email')
@@ -59,12 +61,8 @@ const verifyEmail  = async (req,res) =>{
 
 
     const user = await User.findOne({email : email})
-    console.log('user',user);
 
     if(!user) throw new UnauthenticatedError('Verification Failed')
-    console.log(verificationToken);
-    console.log(user.verificationToken);
-
 
     if(verificationToken !== user.verificationToken) throw new UnauthenticatedError('Verification Failed')
 
