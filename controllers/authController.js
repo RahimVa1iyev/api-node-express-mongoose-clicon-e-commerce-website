@@ -20,7 +20,7 @@ const login = async (req,res) =>{
     const isPasswordCorrect = await user.comparePassword(password)
     if(!isPasswordCorrect) throw new UnauthenticatedError('Email or password is not correct')
 
-    // if(!user.verified) throw new UnauthenticatedError('Please verify your email')
+    if(!user.verified) throw new UnauthenticatedError('Please verify your email')
 
     const userToken = createUserToken(user)
     attachCookiesToResponse({res,user})
@@ -58,9 +58,13 @@ const verifyEmail  = async (req,res) =>{
     const {verificationToken ,email} = req.body
 
 
-    const user = await User.find({email : email})
+    const user = await User.findOne({email : email})
+    console.log('user',user);
 
     if(!user) throw new UnauthenticatedError('Verification Failed')
+    console.log(verificationToken);
+    console.log(user.verificationToken);
+
 
     if(verificationToken !== user.verificationToken) throw new UnauthenticatedError('Verification Failed')
 
