@@ -6,18 +6,16 @@ const { verifyToken, attachCookiesToResponse } = require("../utils")
 
 const authenticateUser = async (req, res, next) => {
     const { refreshToken, accessToken } = req.signedCookies
-    console.log(req.signedCookies);
 
     try {
         if (accessToken) {
             const  {payload}  = verifyToken( accessToken )
             req.user = { userId: payload.user._id, name: payload.user.name, role: payload.user.role }
             next()
+            return
         }
 
-        console.log('salam');
         const {payload} = verifyToken(refreshToken)
-        console.log('payload',payload);
 
         const existingToken = await Token.findOne({
             user: payload.user._id,

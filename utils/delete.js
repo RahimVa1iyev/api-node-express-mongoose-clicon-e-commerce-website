@@ -1,3 +1,6 @@
+const cloudinary = require('cloudinary').v2
+
+
 const extractPublicId = (imageUrl) => {
     // Örnek URL: "https://res.cloudinary.com/your-cloud-name/image/upload/publicId.jpg"
     const parts = imageUrl.split('/');
@@ -13,7 +16,6 @@ const deleteImage = async (imageUrl) => {
         // Cloudinary'den resmi sil
         await cloudinary.uploader.destroy(publicId);
 
-        console.log(`Resim başarıyla silindi. Public ID: ${publicId}`);
     } catch (error) {
         console.error('Resim silme hatası:', error);
         throw new Error('Resim silme hatası');

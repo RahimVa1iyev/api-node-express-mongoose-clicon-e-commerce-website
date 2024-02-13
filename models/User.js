@@ -4,11 +4,24 @@ const bcrypt = require('bcryptjs')
 
 
 const userSchema = new mongoose.Schema({
-    name : {
+    firstName : {
         type:String,
-        required: [true,"Name is required field"],
-        minlength : [2,"Name must be more than 2 letters"],
-        maxlength : [25,"Name must be more than 25 letters"],
+        required: [true,"First name is required field"],
+        minlength : [2,"First name must be more than 2 letters"],
+        maxlength : [25,"First name must be more than 25 letters"],
+    },
+    lastName : {
+        type:String,
+        required: [true,"Last name is required field"],
+        minlength : [2,"Last name must be more than 2 letters"],
+        maxlength : [25,"Last name must be more than 25 letters"],
+    },
+    userName : {
+        type:String,
+        unique:[true, 'User name already exist'],
+        required: [true,"User name is required field"],
+        minlength : [2,"User name must be more than 2 letters"],
+        maxlength : [25,"User name must be more than 25 letters"],
     },
     email:{
         type : String,
@@ -19,16 +32,12 @@ const userSchema = new mongoose.Schema({
             message : 'Please provide valid email'
         }
     },
-    userName : {
-        type:String,
-        minlength : [2,"Name must be more than 2 letters"],
-        maxlength : [25,"Name must be more than 25 letters"],
-    },
     address : {
         type : String,
         minlength : [2,"Name must be more than 2 letters"],
         maxlength : [100,"Name must be more than 100 letters"],
     },
+    image : {type : String},
     password:{
         type : String,
         required :[true,'Password is provided'],
@@ -59,7 +68,6 @@ userSchema.pre('save', async function(next) {
 });
 
 userSchema.methods.comparePassword = async function(cantitadePassword){
-    console.log('cadidate',cantitadePassword);
     const isMatch = await bcrypt.compare(cantitadePassword,this.password)
     return isMatch
 }

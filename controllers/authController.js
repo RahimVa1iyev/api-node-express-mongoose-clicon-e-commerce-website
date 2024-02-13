@@ -3,12 +3,10 @@ const NotFoundError = require('../errors/not-found')
 const UnauthenticatedError = require('../errors/un-authenticated')
 const User = require('../models/User')
 const { StatusCodes } = require('http-status-codes')
-const { createUserToken, attachCookiesToResponse, verifyToken, sendResetPasswordEmail, createHash } = require('../utils')
+const { createUserToken, attachCookiesToResponse, sendResetPasswordEmail, createHash } = require('../utils')
 const crypto = require('crypto')
-const sendEmail = require('../utils/sendEmail')
 const sendVerificationEmail = require('../utils/sendVerificationEmail')
 const Token = require('../models/Token')
-const { log } = require('console')
 
 
 
@@ -24,7 +22,7 @@ const login = async (req, res) => {
 
     if (!isPasswordCorrect) throw new UnauthenticatedError('Email or password is not correct')
 
-    if (!user.verified) throw new UnauthenticatedError('Please verify your email')
+    if (!user.isVerified) throw new UnauthenticatedError('Please verify your email')
 
     const tokenUser = createUserToken(user)
 
@@ -56,16 +54,15 @@ const login = async (req, res) => {
 
 
 const register = async (req, res) => {
-    const { name, email, password, confirmPassword } = req.body
+    const { password, confirmPassword } = req.body
 
     if (!confirmPassword && password !== confirmPassword) throw new BadRequestError('Confirm password does not match')
     const role = 'user'
 
-
     const verificationToken = crypto.randomBytes(40).toString('hex')
-    const user = await User.create({ name, email, password, role, verificationToken })
-    const origin = 'http://localhost:3000'
-    await sendVerificationEmail({ name: user.name, email: user.email, verificationToken: user.verificationToken, origin })
+    const user = await User.create({ ...req.body , role, verificationToken })
+    const origin = 'http://localhost:5173'
+    await sendVerificationEmail({ name: user.firstName, email: user.email, verificationToken: user.verificationToken, origin })
     // const userToken = createUserToken(user)
     // attachCookiesToResponse({res,user})
 
@@ -115,7 +112,7 @@ const forgotPassword = async (req, res) => {
         const passwordToken = crypto.randomBytes(70).toString('hex')
 
         const origin = 'http://localhost:5173'
-        await sendResetPasswordEmail({ name: user.name, email: user.email, token: passwordToken, origin })
+        await sendResetPasswordEmail({ name: user.firstName, email: user.email, token: passwordToken, origin })
 
         const tenMinutes = 1000 * 60 * 10
         const passwordTokenExpiration = new Date(Date.now() + tenMinutes)
@@ -138,8 +135,7 @@ const resetPassword = async (req, res) => {
     if (password !== confirmPassword) throw new BadRequestError('Confirm password does not match')
 
     const user = await User.findOne({ email })
-    console.log('createHash : ' ,createHash(token));
-    console.log('user : ',user.passwordToken);
+
 
 
     if (user) {
