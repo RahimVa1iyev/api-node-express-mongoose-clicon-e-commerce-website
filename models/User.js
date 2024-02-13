@@ -44,7 +44,9 @@ const userSchema = new mongoose.Schema({
     },
     verificationToken : {type : String},
     isVerified : {type: Boolean , default:false},
-    verified:{type: Date}
+    verified:{type: Date},
+    passwordToken : {type : String},
+    passwordTokenExpirationDate : {type : Date}
 })
 
 userSchema.pre('save', async function(next) {

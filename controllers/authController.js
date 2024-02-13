@@ -104,4 +104,12 @@ const verifyEmail = async (req, res) => {
     res.status(StatusCodes.OK).json({ msg: 'Your email successfully verified' })
 }
 
-module.exports = { login, register, verifyEmail, logout }
+const forgotPassword = async (req,res) =>{
+
+}
+
+const resetPassword = async (req,res) =>{
+    
+}
+
+module.exports = { login, register, verifyEmail,forgotPassword,resetPassword,logout }
