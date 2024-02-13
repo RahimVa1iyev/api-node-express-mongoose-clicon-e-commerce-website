@@ -1,15 +1,39 @@
 const UnauthenticatedError = require("../errors/un-authenticated")
 const UnauthorizedError = require("../errors/un-authorized")
-const { verifyToken } = require("../utils")
+const Token = require("../models/Token")
+const { verifyToken, attachCookiesToResponse } = require("../utils")
 
 
 const authenticateUser = async (req, res, next) => {
-    const token = req.signedCookies.token
-    if (!token) throw new UnauthenticatedError('Authentication is not valid')
+    const { refreshToken, accessToken } = req.signedCookies
+    console.log(req.signedCookies);
 
     try {
-        const { payload } = verifyToken({ token })
-        req.user = { userId: payload._id, name: payload.name, role: payload.role }
+        if (accessToken) {
+            const  {payload}  = verifyToken( accessToken )
+            req.user = { userId: payload.user._id, name: payload.user.name, role: payload.user.role }
+            next()
+        }
+
+        console.log('salam');
+        const {payload} = verifyToken(refreshToken)
+        console.log('payload',payload);
+
+        const existingToken = await Token.findOne({
+            user: payload.user._id,
+            refreshToken: payload.refreshToken
+        })
+
+        if (!existingToken || !existingToken?.isValid) {
+            console.log('exis',existingToken);
+            throw new UnauthenticatedError('Authentication is not valid')
+        }
+        attachCookiesToResponse({
+            res,
+            user: payload.user,
+            refreshToken: existingToken.refreshToken
+        })
+        req.user = { userId: payload.user._id, name: payload.user.name, role: payload.user.role }
         next()
 
     } catch (error) {
