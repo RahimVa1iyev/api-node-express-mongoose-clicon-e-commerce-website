@@ -73,11 +73,17 @@ const register = async (req, res) => {
 
 
 const logout = async (req, res) => {
-    res.cookie('token', 'logout', {
+    console.log(req.user);
+    await Token.findOneAndDelete({user:req.user.userId})
+    res.cookie('accessToken', 'logout', {
         httpOnly: true,
         expiresIn: new Date(Date.now())
     })
-    res.status(StatusCodes.OK).json()
+    res.cookie('refreshToken', 'logout', {
+        httpOnly: true,
+        expiresIn: new Date(Date.now())
+    })
+    res.status(StatusCodes.OK).json({msj :'user logged out'})
 }
 
 const verifyEmail = async (req, res) => {
