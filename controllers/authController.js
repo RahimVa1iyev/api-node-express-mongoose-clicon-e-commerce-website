@@ -3,11 +3,12 @@ const NotFoundError = require('../errors/not-found')
 const UnauthenticatedError = require('../errors/un-authenticated')
 const User = require('../models/User')
 const { StatusCodes } = require('http-status-codes')
-const { createUserToken, attachCookiesToResponse, verifyToken } = require('../utils')
+const { createUserToken, attachCookiesToResponse, verifyToken, sendResetPasswordEmail, createHash } = require('../utils')
 const crypto = require('crypto')
 const sendEmail = require('../utils/sendEmail')
 const sendVerificationEmail = require('../utils/sendVerificationEmail')
 const Token = require('../models/Token')
+const { log } = require('console')
 
 
 
@@ -49,7 +50,7 @@ const login = async (req, res) => {
     await Token.create(userToken)
 
     attachCookiesToResponse({ res, user, refreshToken })
-    
+
     res.status(StatusCodes.OK).json({ user: tokenUser })
 }
 
@@ -74,7 +75,7 @@ const register = async (req, res) => {
 
 const logout = async (req, res) => {
     console.log(req.user);
-    await Token.findOneAndDelete({user:req.user.userId})
+    await Token.findOneAndDelete({ user: req.user.userId })
     res.cookie('accessToken', 'logout', {
         httpOnly: true,
         expiresIn: new Date(Date.now())
@@ -83,7 +84,7 @@ const logout = async (req, res) => {
         httpOnly: true,
         expiresIn: new Date(Date.now())
     })
-    res.status(StatusCodes.OK).json({msj :'user logged out'})
+    res.status(StatusCodes.OK).json({ msj: 'user logged out' })
 }
 
 const verifyEmail = async (req, res) => {
@@ -104,12 +105,55 @@ const verifyEmail = async (req, res) => {
     res.status(StatusCodes.OK).json({ msg: 'Your email successfully verified' })
 }
 
-const forgotPassword = async (req,res) =>{
+const forgotPassword = async (req, res) => {
+    const { email } = req.body
+    if (!email) throw new BadRequestError('Please provide email address')
+
+    const user = await User.findOne({ email })
+
+    if (user) {
+        const passwordToken = crypto.randomBytes(70).toString('hex')
+
+        const origin = 'http://localhost:5173'
+        await sendResetPasswordEmail({ name: user.name, email: user.email, token: passwordToken, origin })
+
+        const tenMinutes = 1000 * 60 * 10
+        const passwordTokenExpiration = new Date(Date.now() + tenMinutes)
+
+        user.passwordToken = createHash(passwordToken)
+        user.passwordTokenExpirationDate = passwordTokenExpiration
+        await user.save()
+    }
+
+    res.status(StatusCodes.OK).json({ msj: 'Please check your email for reset password link' })
 
 }
 
-const resetPassword = async (req,res) =>{
-    
+const resetPassword = async (req, res) => {
+
+    const { token, email, password, confirmPassword } = req.body
+
+    if (!token || !email || !password || !confirmPassword) throw new BadRequestError('Provides all fields')
+
+    if (password !== confirmPassword) throw new BadRequestError('Confirm password does not match')
+
+    const user = await User.findOne({ email })
+    console.log('createHash : ' ,createHash(token));
+    console.log('user : ',user.passwordToken);
+
+
+    if (user) {
+        const currentDate = new Date()
+        if (createHash(token) !== user.passwordToken && user.passwordTokenExpirationDate < currentDate) throw new UnauthenticatedError('Invalid credential')
+        user.password = password
+        user.passwordToken = null
+        user.passwordTokenExpirationDate = null
+        await user.save()
+    }
+
+    res.status(StatusCodes.OK).json({msg : 'Your password succesfully changed'})
+
+
 }
 
-module.exports = { login, register, verifyEmail,forgotPassword,resetPassword,logout }
+module.exports = { login, register, verifyEmail, forgotPassword, resetPassword, logout }
