@@ -117,7 +117,15 @@ const filterProductsInDetail = async (req, res) => {
     const { seriaNo } = req.params;
     const query = req.query;
 
-    const products = await Product.find({ seriaNo: seriaNo });
+    const products = await Product.find({ seriaNo: seriaNo }).populate({
+        path: 'categoryId',
+        populate: {
+            path: 'features'
+        }
+    }).populate({
+        path: 'brandId',
+        select: 'name id features' 
+    });
     if(!products) return NotFoundError(`Product not found by seriaNo :${seriaNo}`)
 
     const filteredProducts = products.filter((product) => {
@@ -130,7 +138,16 @@ const filterProductsInDetail = async (req, res) => {
     });
 
     const product = filteredProducts[0]
-    res.status(StatusCodes.OK).json({ product })
+    const brandFeatures = product.brandId.features.map(feature => ({ name: feature.name, options: feature.option }));
+    const categoryFeatures = product.categoryId.features.map(feature => ({ name: feature.name, options: feature.options }));
+
+    const commonFeatures = brandFeatures.filter(brandFeature =>
+        categoryFeatures.some(categoryFeature =>
+            categoryFeature.name === brandFeature.name &&
+            categoryFeature.options && brandFeature.options && categoryFeature.options.some(option => brandFeature.options.includes(option))
+        )
+    );
+    res.status(StatusCodes.OK).json({ product , commonFeatures })
 };
 
 
@@ -138,19 +155,33 @@ const getProductById = async (req, res) => {
     const { id: productId } = req.params
     const product = await Product.findOne({ _id: productId }).populate({
         path: 'categoryId',
-         
-    })
-        .populate({
-            path: 'brandId',
-            select: 'name id features' 
-        });
+        populate: {
+            path: 'features'
+        }
+    }).populate({
+        path: 'brandId',
+        select: 'name id features' 
+    });
 
     if (!product) throw new NotFoundError(`Product not found by Id : ${productId}`)
+    const brandFeatures = product.brandId.features.map(feature => ({ name: feature.name, options: feature.option }));
+    const categoryFeatures = product.categoryId.features.map(feature => ({ name: feature.name, options: feature.options }));
+
+    const commonFeatures = brandFeatures.filter(brandFeature =>
+        categoryFeatures.some(categoryFeature =>
+            categoryFeature.name === brandFeature.name &&
+            categoryFeature.options && brandFeature.options && categoryFeature.options.some(option => brandFeature.options.includes(option))
+        )
+    );
+
 
     const relatedProducts = await Product.find({ categoryId: product.categoryId._id })
     
-    res.status(StatusCodes.OK).json({ product, relatedProducts })
+    res.status(StatusCodes.OK).json({ product, commonFeatures, relatedProducts })
 }
+
+
+
 
 const uploadImage = async (req, res) => {
     const { productId } = req.params
