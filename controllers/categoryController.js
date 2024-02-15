@@ -43,7 +43,7 @@ const updateCategory = async (req, res) => {
 }
 
 const getAllCategory = async (req, res) => {
-    const categories = await Category.find({}).populate({path : 'features'}).populate({path : 'brands'})// Populate the 'brands' field
+    const categories = await Category.find({}).populate({path : 'features'}).populate({path : 'brands'}).populate({path : 'products' , select : 'name salePrice images description discountPercent bestDiscountPercent'})// Populate the 'brands' field
     res.status(StatusCodes.OK).json({ categories })
 }
 
