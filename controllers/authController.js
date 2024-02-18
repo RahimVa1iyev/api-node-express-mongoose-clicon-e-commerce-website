@@ -10,13 +10,55 @@ const Token = require('../models/Token')
 
 
 
+// const login = async (req, res) => {
+//     const { email, password } = req.body
+//     if (!email || !password) throw new BadRequestError('Email and password are require fileds')
+
+//     const user = await User.findOne({ email })
+//     if (!user) throw new NotFoundError('User not found')
+
+
+//     const isPasswordCorrect = await user.comparePassword(password)
+
+//     if (!isPasswordCorrect) throw new UnauthenticatedError('Email or password is not correct')
+
+//     if (!user.isVerified) throw new UnauthenticatedError('Please verify your email')
+
+//     const tokenUser = createUserToken(user)
+
+//     let refreshToken = '';
+
+//     const existingToken = await Token.findOne({ user: user._id })
+//     if (existingToken) {
+//         const { isValid } = existingToken;
+//         if (!isValid) {
+//             throw new UnauthenticatedError('Invalid Credentials')
+//         }
+//         refreshToken = existingToken.refreshToken
+//         attachCookiesToResponse({ res, user, refreshToken })
+//         res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems , orders:user.orders })
+//         return;
+//     }
+
+//     refreshToken = crypto.randomBytes(40).toString('hex')
+//     const userAgent = req.headers['user-agent']
+//     const ip = req.ip
+//     const userToken = { refreshToken, ip, userAgent, user: user._id }
+
+//     await Token.create(userToken)
+
+//     attachCookiesToResponse({ res, user, refreshToken })
+
+//     res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems , orders:user.orders })
+
+// }
+
 const login = async (req, res) => {
     const { email, password } = req.body
-    if (!email || !password) throw new BadRequestError('Email and password are require fileds')
+    if (!email || !password) throw new BadRequestError('Email and password are required fields')
 
     const user = await User.findOne({ email })
     if (!user) throw new NotFoundError('User not found')
-
 
     const isPasswordCorrect = await user.comparePassword(password)
 
@@ -35,23 +77,21 @@ const login = async (req, res) => {
             throw new UnauthenticatedError('Invalid Credentials')
         }
         refreshToken = existingToken.refreshToken
-        attachCookiesToResponse({ res, user, refreshToken })
-        res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems , orders:user.orders })
-        return;
+    } else {
+        refreshToken = crypto.randomBytes(40).toString('hex')
+        const userAgent = req.headers['user-agent']
+        const ip = req.ip
+        const userToken = { refreshToken, ip, userAgent, user: user._id }
+
+        await Token.create(userToken)
     }
 
-    refreshToken = crypto.randomBytes(40).toString('hex')
-    const userAgent = req.headers['user-agent']
-    const ip = req.ip
-    const userToken = { refreshToken, ip, userAgent, user: user._id }
-
-    await Token.create(userToken)
-
+    // Burada attachCookiesToResponse fonksiyonunu çağırdım.
     attachCookiesToResponse({ res, user, refreshToken })
 
     res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems , orders:user.orders })
-
 }
+
 
 
 const register = async (req, res) => {
