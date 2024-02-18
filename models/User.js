@@ -55,7 +55,9 @@ const userSchema = new mongoose.Schema({
     isVerified : {type: Boolean , default:false},
     verified:{type: Date},
     passwordToken : {type : String},
-    passwordTokenExpirationDate : {type : Date}
+    passwordTokenExpirationDate : {type : Date},
+    basketItems : [{type : mongoose.Types.ObjectId , ref : 'BasketItem'}]
+
 })
 
 userSchema.pre('save', async function(next) {

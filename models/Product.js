@@ -1,4 +1,4 @@
-const { number } = require('joi');
+const { number, ref } = require('joi');
 const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2
 
@@ -93,7 +93,7 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-
+    basketItems : [{type : mongoose.Types.ObjectId , ref : 'BasketItem'}]
 
 })
 
