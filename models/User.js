@@ -56,7 +56,9 @@ const userSchema = new mongoose.Schema({
     verified:{type: Date},
     passwordToken : {type : String},
     passwordTokenExpirationDate : {type : Date},
-    basketItems : [{type : mongoose.Types.ObjectId , ref : 'BasketItem'}]
+    basketItems : [{type : mongoose.Types.ObjectId , ref : 'BasketItem'}],
+    orders : [{type : mongoose.Types.ObjectId , ref : 'Order'}]
+
 
 })
 

@@ -36,7 +36,7 @@ const login = async (req, res) => {
         }
         refreshToken = existingToken.refreshToken
         attachCookiesToResponse({ res, user, refreshToken })
-        res.status(StatusCodes.OK).json({basketItems : user.basketItems })
+        res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems })
         return;
     }
 
@@ -49,7 +49,7 @@ const login = async (req, res) => {
 
     attachCookiesToResponse({ res, user, refreshToken })
 
-    res.status(StatusCodes.OK).json({ basketItems : user.basketItems })
+    res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems })
 }
 
 

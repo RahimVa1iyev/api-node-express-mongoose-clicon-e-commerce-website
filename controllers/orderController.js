@@ -3,11 +3,14 @@ const Order = require('../models/Order')
 const OrderItem = require('../models/OrderItem')
 const { StatusCodes } = require('http-status-codes');
 const { calculatePercent } = require('../utils');
+const User = require('../models/User');
 
 const createOrder = async (req, res) => {
     const basketItems = await BasketItem.find({ userId: req.user.userId }).populate('productId', 'salePrice costPrice discountPercent bestDiscountPercent')
 
-    const order = await Order.create({ ...req.body, userId: req.user.userId, createdAt: Date.now() })
+    const order = await Order.create({ ...req.body, userId: req.user.userId, createdAt: Date.now()})
+    const user = await User.findOne({_id : req.user.userId})
+    user.orders.push(order._id)
 
     for (const item of basketItems) {
         const { _id, salePrice, costPrice, discountPercent, bestDiscountPercent } = item.productId
@@ -26,6 +29,7 @@ const createOrder = async (req, res) => {
     }
 
     await order.save()
+    await user.save()
 
     res.status(StatusCodes.CREATED).json({ id: order._id })
 }
