@@ -12,7 +12,8 @@ const cookieParser = require('cookie-parser')
 const fileUpload = require('express-fileupload')
 app.use(cors({
     origin: 'http://localhost:5173',
-    credentials: true
+    credentials: true,
+    optionsSuccessStatus: 200,
   }));
 
 // use Cloudinary.v2

@@ -31,6 +31,8 @@ const attachCookiesToResponse = ({ res, user, refreshToken }) => {
         expires: new Date(Date.now() + shorterExp )
     })
 
+    return {accessTokenJwt , refreshTokenJWT}
+
 }
 
 module.exports = { createJWT, verifyToken, attachCookiesToResponse }

@@ -87,9 +87,9 @@ const login = async (req, res) => {
     }
 
     // Burada attachCookiesToResponse fonksiyonunu çağırdım.
-    attachCookiesToResponse({ res, user, refreshToken })
+   const {accessTokenJwt,refreshTokenJWT} = attachCookiesToResponse({ res, user, refreshToken })
 
-    res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems , orders:user.orders })
+    res.status(StatusCodes.OK).json({ user: tokenUser , basketItems : user.basketItems , orders:user.orders ,accessTokenJwt,refreshTokenJWT})
 }
 
 
