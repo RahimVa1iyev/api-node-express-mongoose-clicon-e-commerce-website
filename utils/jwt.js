@@ -14,8 +14,8 @@ const attachCookiesToResponse = ({ res, user, refreshToken }) => {
 
 
 
-    const shorterExp = 1000 * 60 * 60 
-    const longerExp = 100 * 60 * 60 * 24 * 4
+    const shorterExp = 1000 * 60 * 60 * 24 * 30
+    const longerExp = 100 * 60 * 60 * 24 * 30
 
         res.cookie('refreshToken', refreshTokenJWT, {
         httpOnly: true,
