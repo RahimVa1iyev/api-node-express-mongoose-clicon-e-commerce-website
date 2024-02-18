@@ -10,7 +10,10 @@ const app = express()
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const fileUpload = require('express-fileupload')
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+  }));
 
 // use Cloudinary.v2
 const cloudinary = require('cloudinary').v2;
