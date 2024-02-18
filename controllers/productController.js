@@ -66,18 +66,34 @@ const getMostViewProducts = async (req, res) => {
 }
 const topRatedProducts = async (req, res) => {
     const products = await Product.find({ rate: { $gt: 0 } }).sort({ rate: -1 })
+    res.status(StatusCodes.OK).json({products})
 }
 
 const filterAndSortProducts = async (req, res) => {
-    const { categoryId, brandId, min_price, max_price, page, page_size, name, price } = req.query;
+    const { categoryId, brandId, min_price, max_price, page, page_size, name, price , search} = req.query;
     //    filter options
     const filter = {};
     if (categoryId) filter.categoryId = categoryId;
-    if (brandId) filter.brandId = brandId;
+
+    // Split and convert brandId string to an array
+    if (brandId) {
+        filter.brandId = brandId.split(',');
+    }
+
     if (min_price) filter.salePrice = { $gte: parseFloat(min_price) };
     if (max_price) {
         if (!filter.salePrice) filter.salePrice = {};
         filter.salePrice.$lte = parseFloat(max_price);
+    }
+
+    // Search filter
+    if (search) {
+        filter.$or = [
+            { name: { $regex: search, $options: 'i' } },
+            // { description: { $regex: search, $options: 'i' } },
+            // { brandId: { $in: search.split(',') } }, // Brand adına görə axtarış
+            // { categoryId: { $in: search.split(',') } } // Category adına görə axtarış
+        ];
     }
 
     // sort options
@@ -113,6 +129,8 @@ const filterAndSortProducts = async (req, res) => {
     });
 }
 
+
+
 const filterProductsInDetail = async (req, res) => {
     const { seriaNo } = req.params;
     const query = req.query;
@@ -124,9 +142,9 @@ const filterProductsInDetail = async (req, res) => {
         }
     }).populate({
         path: 'brandId',
-        select: 'name id features' 
+        select: 'name id features'
     });
-    if(!products) return NotFoundError(`Product not found by seriaNo :${seriaNo}`)
+    if (!products) return NotFoundError(`Product not found by seriaNo :${seriaNo}`)
 
     const filteredProducts = products.filter((product) => {
         for (const key in query) {
@@ -147,7 +165,7 @@ const filterProductsInDetail = async (req, res) => {
             categoryFeature.options && brandFeature.options && categoryFeature.options.some(option => brandFeature.options.includes(option))
         )
     );
-    res.status(StatusCodes.OK).json({ product , commonFeatures })
+    res.status(StatusCodes.OK).json({ product, commonFeatures })
 };
 
 
@@ -160,7 +178,7 @@ const getProductById = async (req, res) => {
         }
     }).populate({
         path: 'brandId',
-        select: 'name id features' 
+        select: 'name id features'
     });
 
     if (!product) throw new NotFoundError(`Product not found by Id : ${productId}`)
@@ -176,7 +194,7 @@ const getProductById = async (req, res) => {
 
 
     const relatedProducts = await Product.find({ categoryId: product.categoryId._id })
-    
+
     res.status(StatusCodes.OK).json({ product, commonFeatures, relatedProducts })
 }
 
