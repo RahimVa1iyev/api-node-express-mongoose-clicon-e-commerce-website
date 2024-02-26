@@ -97,9 +97,5 @@ const productSchema = new mongoose.Schema({
 
 })
 
-productSchema.path('costPrice').validate(function (value) {
-    return value <= this.salePrice;
-}, 'Cost price should not be greater than sale price');
-
 
 module.exports = mongoose.model('Product', productSchema)

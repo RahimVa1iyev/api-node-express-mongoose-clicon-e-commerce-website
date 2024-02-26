@@ -30,7 +30,8 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     const { productId } = req.params;
-    const product = await Product.findById(productId, req.body); // Use findById instead of find
+    const product = await Product.findByIdAndUpdate(productId, req.body,{new:true , runValidators:true}); // Use findById instead of find
+    res.status(StatusCodes.OK).json({product})
 };
 
 
@@ -129,8 +130,6 @@ const filterAndSortProducts = async (req, res) => {
     });
 }
 
-
-
 const filterProductsInDetail = async (req, res) => {
     const { seriaNo } = req.params;
     const query = req.query;
@@ -168,9 +167,10 @@ const filterProductsInDetail = async (req, res) => {
     res.status(StatusCodes.OK).json({ product, commonFeatures })
 };
 
-
 const getProductById = async (req, res) => {
     const { id: productId } = req.params
+    console.log('pr',productId);
+    console.log('id');
     const product = await Product.findOne({ _id: productId }).populate({
         path: 'categoryId',
         populate: {
@@ -197,8 +197,6 @@ const getProductById = async (req, res) => {
 
     res.status(StatusCodes.OK).json({ product, commonFeatures, relatedProducts })
 }
-
-
 
 
 const uploadImage = async (req, res) => {

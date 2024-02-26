@@ -5,15 +5,21 @@ const { verifyToken, attachCookiesToResponse } = require("../utils")
 
 
 const authenticateUser = async (req, res, next) => {
-    const { refreshToken, accessToken } = req.signedCookies
 
+
+
+    const refreshToken  = req.cookies.refreshToken
+    const accessToken = req.cookies.accessToken
     try {
         if (accessToken) {
+            console.log('aa',accessToken);
             const  {payload}  = verifyToken( accessToken )
+            console.log('payload',payload);
             req.user = { userId: payload.user._id, name: payload.user.name, role: payload.user.role }
             next()
             return
         }
+        console.log('procesee continiue');
 
         const {payload} = verifyToken(refreshToken)
 
